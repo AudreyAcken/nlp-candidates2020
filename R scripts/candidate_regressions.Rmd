@@ -1,0 +1,66 @@
+---
+title: "candidate_regressions"
+author: "Dorottya Demszky"
+date: "3/14/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("knitr")      # for knitting RMarkdown 
+library("kableExtra") # for making nice tables
+library("janitor")    # for cleaning column names
+library("broom")    # for tidying up linear models 
+library("broom.mixed")
+library("patchwork")    # for making figure panels
+library("lme4")    # for linear mixed effects models
+library("tidyverse")  # for wrangling, plotting, etc. 
+library("lmerTest")  # for wrangling, plotting, etc. 
+library("car")
+```
+
+## Load data
+
+```{r}
+data = read.csv('/Users/ddemszky/Google_Drive/Polygence/Audrey/data/all_data_combined.csv',
+                header=TRUE, sep=",")
+```
+
+```{r}
+data  %>%  glimpse()
+```
+## Plot data
+
+```{r}
+ggplot(data = data %>% subset(., !is.na(valence)) %>% subset(., !is.na(popularity)),
+       mapping = aes(x = valence,
+                     y = popularity,
+                     color = candidate,
+                     group=candidate)) +
+  geom_point(alpha=0.1) +
+  geom_smooth(method = "lm") 
+```
+
+
+## Run regressions
+
+```{r}
+fit.valence = lm(formula = popularity ~ 1 + valence *candidate, data = data, na.action = na.omit)
+fit.valence %>% summary()
+```
+
+```{r}
+fit.power = lm(formula = popularity ~ 1 + power *candidate, data = data, na.action = na.omit)
+fit.power %>% summary()
+```
+```{r}
+fit.dominance = lm(formula = popularity ~ 1 + dominance *candidate, data = data, na.action = na.omit)
+fit.dominance %>% summary()
+```
+
+
+```{r}
+fit.agency = lm(formula = popularity ~ 1 + agency *candidate, data = data, na.action = na.omit)
+fit.agency %>% summary()
+```
+
